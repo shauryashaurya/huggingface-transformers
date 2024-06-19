@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""" ALIGN model configuration"""
+"""ALIGN model configuration"""
 
 import os
 from typing import TYPE_CHECKING, List, Union
@@ -26,9 +26,6 @@ from ...utils import logging
 
 
 logger = logging.get_logger(__name__)
-
-
-from ..deprecated._archive_maps import ALIGN_PRETRAINED_CONFIG_ARCHIVE_MAP  # noqa: F401, E402
 
 
 class AlignTextConfig(PretrainedConfig):
@@ -196,7 +193,7 @@ class AlignVisionConfig(PretrainedConfig):
         hidden_act (`str` or `function`, *optional*, defaults to `"silu"`):
             The non-linear activation function (function or string) in each block. If string, `"gelu"`, `"relu"`,
             `"selu", `"gelu_new"`, `"silu"` and `"mish"` are supported.
-        hiddem_dim (`int`, *optional*, defaults to 1280):
+        hidden_dim (`int`, *optional*, defaults to 1280):
             The hidden dimension of the layer before the classification head.
         pooling_type (`str` or `function`, *optional*, defaults to `"mean"`):
             Type of final pooling to be applied before the dense classification head. Available options are [`"mean"`,
