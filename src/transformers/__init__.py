@@ -18,7 +18,7 @@
 # to defer the actual importing for when the objects are requested. This way `import transformers` provides the names
 # in the namespace without actually importing anything (and especially none of the backends).
 
-__version__ = "4.43.0.dev0"
+__version__ = "4.45.0.dev0"
 
 from typing import TYPE_CHECKING
 
@@ -57,7 +57,7 @@ _import_structure = {
     "agents": [
         "Agent",
         "CodeAgent",
-        "HfEngine",
+        "HfApiEngine",
         "PipelineTool",
         "ReactAgent",
         "ReactCodeAgent",
@@ -65,8 +65,10 @@ _import_structure = {
         "Tool",
         "Toolbox",
         "ToolCollection",
+        "TransformersEngine",
         "launch_gradio_demo",
         "load_tool",
+        "stream_to_gradio",
     ],
     "audio_utils": [],
     "benchmark": [],
@@ -103,6 +105,7 @@ _import_structure = {
         "DataCollatorForSOP",
         "DataCollatorForTokenClassification",
         "DataCollatorForWholeWordMask",
+        "DataCollatorWithFlattening",
         "DataCollatorWithPadding",
         "DefaultDataCollator",
         "default_data_collator",
@@ -249,6 +252,11 @@ _import_structure = {
         "CanineConfig",
         "CanineTokenizer",
     ],
+    "models.chameleon": [
+        "ChameleonConfig",
+        "ChameleonProcessor",
+        "ChameleonVQVAEConfig",
+    ],
     "models.chinese_clip": [
         "ChineseCLIPConfig",
         "ChineseCLIPProcessor",
@@ -305,6 +313,7 @@ _import_structure = {
         "CTRLTokenizer",
     ],
     "models.cvt": ["CvtConfig"],
+    "models.dac": ["DacConfig", "DacFeatureExtractor"],
     "models.data2vec": [
         "Data2VecAudioConfig",
         "Data2VecTextConfig",
@@ -409,6 +418,7 @@ _import_structure = {
     "models.ernie": ["ErnieConfig"],
     "models.esm": ["EsmConfig", "EsmTokenizer"],
     "models.falcon": ["FalconConfig"],
+    "models.falcon_mamba": ["FalconMambaConfig"],
     "models.fastspeech2_conformer": [
         "FastSpeech2ConformerConfig",
         "FastSpeech2ConformerHifiGanConfig",
@@ -452,6 +462,7 @@ _import_structure = {
     "models.gpt_neox_japanese": ["GPTNeoXJapaneseConfig"],
     "models.gpt_sw3": [],
     "models.gptj": ["GPTJConfig"],
+    "models.granite": ["GraniteConfig"],
     "models.grounding_dino": [
         "GroundingDinoConfig",
         "GroundingDinoProcessor",
@@ -462,6 +473,7 @@ _import_structure = {
         "GroupViTVisionConfig",
     ],
     "models.herbert": ["HerbertTokenizer"],
+    "models.hiera": ["HieraConfig"],
     "models.hubert": ["HubertConfig"],
     "models.ibert": ["IBertConfig"],
     "models.idefics": ["IdeficsConfig"],
@@ -521,6 +533,7 @@ _import_structure = {
         "LlavaNextVideoConfig",
         "LlavaNextVideoProcessor",
     ],
+    "models.llava_onevision": ["LlavaOnevisionConfig", "LlavaOnevisionProcessor"],
     "models.longformer": [
         "LongformerConfig",
         "LongformerTokenizer",
@@ -536,6 +549,7 @@ _import_structure = {
     ],
     "models.m2m_100": ["M2M100Config"],
     "models.mamba": ["MambaConfig"],
+    "models.mamba2": ["Mamba2Config"],
     "models.marian": ["MarianConfig"],
     "models.markuplm": [
         "MarkupLMConfig",
@@ -584,11 +598,13 @@ _import_structure = {
         "MusicgenMelodyDecoderConfig",
     ],
     "models.mvp": ["MvpConfig", "MvpTokenizer"],
+    "models.nemotron": ["NemotronConfig"],
     "models.nllb": [],
     "models.nllb_moe": ["NllbMoeConfig"],
     "models.nougat": ["NougatProcessor"],
     "models.nystromformer": ["NystromformerConfig"],
     "models.olmo": ["OlmoConfig"],
+    "models.olmoe": ["OlmoeConfig"],
     "models.oneformer": [
         "OneFormerConfig",
         "OneFormerProcessor",
@@ -645,7 +661,16 @@ _import_structure = {
         "Qwen2Config",
         "Qwen2Tokenizer",
     ],
+    "models.qwen2_audio": [
+        "Qwen2AudioConfig",
+        "Qwen2AudioEncoderConfig",
+        "Qwen2AudioProcessor",
+    ],
     "models.qwen2_moe": ["Qwen2MoeConfig"],
+    "models.qwen2_vl": [
+        "Qwen2VLConfig",
+        "Qwen2VLProcessor",
+    ],
     "models.rag": ["RagConfig", "RagRetriever", "RagTokenizer"],
     "models.recurrent_gemma": ["RecurrentGemmaConfig"],
     "models.reformer": ["ReformerConfig"],
@@ -914,6 +939,7 @@ _import_structure = {
         "is_tokenizers_available",
         "is_torch_available",
         "is_torch_mlu_available",
+        "is_torch_musa_available",
         "is_torch_neuroncore_available",
         "is_torch_npu_available",
         "is_torch_tpu_available",
@@ -928,9 +954,11 @@ _import_structure = {
         "AwqConfig",
         "BitsAndBytesConfig",
         "EetqConfig",
+        "FbgemmFp8Config",
         "GPTQConfig",
         "HqqConfig",
         "QuantoConfig",
+        "TorchAoConfig",
     ],
 }
 
@@ -1124,6 +1152,7 @@ else:
     _import_structure["models.bit"].extend(["BitImageProcessor"])
     _import_structure["models.blip"].extend(["BlipImageProcessor"])
     _import_structure["models.bridgetower"].append("BridgeTowerImageProcessor")
+    _import_structure["models.chameleon"].append("ChameleonImageProcessor")
     _import_structure["models.chinese_clip"].extend(["ChineseCLIPFeatureExtractor", "ChineseCLIPImageProcessor"])
     _import_structure["models.clip"].extend(["CLIPFeatureExtractor", "CLIPImageProcessor"])
     _import_structure["models.conditional_detr"].extend(
@@ -1155,6 +1184,9 @@ else:
     _import_structure["models.levit"].extend(["LevitFeatureExtractor", "LevitImageProcessor"])
     _import_structure["models.llava_next"].append("LlavaNextImageProcessor")
     _import_structure["models.llava_next_video"].append("LlavaNextVideoImageProcessor")
+    _import_structure["models.llava_onevision"].extend(
+        ["LlavaOnevisionImageProcessor", "LlavaOnevisionVideoProcessor"]
+    )
     _import_structure["models.mask2former"].append("Mask2FormerImageProcessor")
     _import_structure["models.maskformer"].extend(["MaskFormerFeatureExtractor", "MaskFormerImageProcessor"])
     _import_structure["models.mobilenet_v1"].extend(["MobileNetV1FeatureExtractor", "MobileNetV1ImageProcessor"])
@@ -1168,6 +1200,7 @@ else:
     _import_structure["models.pix2struct"].extend(["Pix2StructImageProcessor"])
     _import_structure["models.poolformer"].extend(["PoolFormerFeatureExtractor", "PoolFormerImageProcessor"])
     _import_structure["models.pvt"].extend(["PvtImageProcessor"])
+    _import_structure["models.qwen2_vl"].extend(["Qwen2VLImageProcessor"])
     _import_structure["models.rt_detr"].extend(["RTDetrImageProcessor"])
     _import_structure["models.sam"].extend(["SamImageProcessor"])
     _import_structure["models.segformer"].extend(["SegformerFeatureExtractor", "SegformerImageProcessor"])
@@ -1216,10 +1249,15 @@ else:
         "DynamicCache",
         "EncoderDecoderCache",
         "HQQQuantizedCache",
+        "HybridCache",
+        "MambaCache",
+        "OffloadedCache",
+        "OffloadedStaticCache",
         "QuantizedCache",
         "QuantizedCacheConfig",
         "QuantoQuantizedCache",
         "SinkCache",
+        "SlidingWindowCache",
         "StaticCache",
     ]
     _import_structure["data.datasets"] = [
@@ -1251,7 +1289,6 @@ else:
             "ExponentialDecayLengthPenalty",
             "ForcedBOSTokenLogitsProcessor",
             "ForcedEOSTokenLogitsProcessor",
-            "ForceTokensLogitsProcessor",
             "GenerationMixin",
             "HammingDiversityLogitsProcessor",
             "InfNanRemoveLogitsProcessor",
@@ -1285,7 +1322,9 @@ else:
             "WhisperTimeStampLogitsProcessor",
         ]
     )
+    _import_structure["modeling_flash_attention_utils"] = []
     _import_structure["modeling_outputs"] = []
+    _import_structure["modeling_rope_utils"] = ["ROPE_INIT_FUNCTIONS"]
     _import_structure["modeling_utils"] = ["PreTrainedModel"]
 
     # PyTorch models structure
@@ -1547,10 +1586,13 @@ else:
     _import_structure["models.blip_2"].extend(
         [
             "Blip2ForConditionalGeneration",
+            "Blip2ForImageTextRetrieval",
             "Blip2Model",
             "Blip2PreTrainedModel",
             "Blip2QFormerModel",
+            "Blip2TextModelWithProjection",
             "Blip2VisionModel",
+            "Blip2VisionModelWithProjection",
         ]
     )
     _import_structure["models.bloom"].extend(
@@ -1604,6 +1646,15 @@ else:
             "CanineModel",
             "CaninePreTrainedModel",
             "load_tf_weights_in_canine",
+        ]
+    )
+    _import_structure["models.chameleon"].extend(
+        [
+            "ChameleonForConditionalGeneration",
+            "ChameleonModel",
+            "ChameleonPreTrainedModel",
+            "ChameleonProcessor",
+            "ChameleonVQVAE",
         ]
     )
     _import_structure["models.chinese_clip"].extend(
@@ -1720,6 +1771,12 @@ else:
             "CvtForImageClassification",
             "CvtModel",
             "CvtPreTrainedModel",
+        ]
+    )
+    _import_structure["models.dac"].extend(
+        [
+            "DacModel",
+            "DacPreTrainedModel",
         ]
     )
     _import_structure["models.data2vec"].extend(
@@ -2106,6 +2163,13 @@ else:
             "FalconPreTrainedModel",
         ]
     )
+    _import_structure["models.falcon_mamba"].extend(
+        [
+            "FalconMambaForCausalLM",
+            "FalconMambaModel",
+            "FalconMambaPreTrainedModel",
+        ]
+    )
     _import_structure["models.fastspeech2_conformer"].extend(
         [
             "FastSpeech2ConformerHifiGan",
@@ -2269,6 +2333,13 @@ else:
             "GPTJPreTrainedModel",
         ]
     )
+    _import_structure["models.granite"].extend(
+        [
+            "GraniteForCausalLM",
+            "GraniteModel",
+            "GranitePreTrainedModel",
+        ]
+    )
     _import_structure["models.grounding_dino"].extend(
         [
             "GroundingDinoForObjectDetection",
@@ -2282,6 +2353,15 @@ else:
             "GroupViTPreTrainedModel",
             "GroupViTTextModel",
             "GroupViTVisionModel",
+        ]
+    )
+    _import_structure["models.hiera"].extend(
+        [
+            "HieraBackbone",
+            "HieraForImageClassification",
+            "HieraForPreTraining",
+            "HieraModel",
+            "HieraPreTrainedModel",
         ]
     )
     _import_structure["models.hubert"].extend(
@@ -2456,6 +2536,12 @@ else:
             "LlavaNextVideoPreTrainedModel",
         ]
     )
+    _import_structure["models.llava_onevision"].extend(
+        [
+            "LlavaOnevisionForConditionalGeneration",
+            "LlavaOnevisionPreTrainedModel",
+        ]
+    )
     _import_structure["models.longformer"].extend(
         [
             "LongformerForMaskedLM",
@@ -2513,6 +2599,13 @@ else:
             "MambaForCausalLM",
             "MambaModel",
             "MambaPreTrainedModel",
+        ]
+    )
+    _import_structure["models.mamba2"].extend(
+        [
+            "Mamba2ForCausalLM",
+            "Mamba2Model",
+            "Mamba2PreTrainedModel",
         ]
     )
     _import_structure["models.marian"].extend(["MarianForCausalLM", "MarianModel", "MarianMTModel"])
@@ -2708,6 +2801,16 @@ else:
             "MvpPreTrainedModel",
         ]
     )
+    _import_structure["models.nemotron"].extend(
+        [
+            "NemotronForCausalLM",
+            "NemotronForQuestionAnswering",
+            "NemotronForSequenceClassification",
+            "NemotronForTokenClassification",
+            "NemotronModel",
+            "NemotronPreTrainedModel",
+        ]
+    )
     _import_structure["models.nllb_moe"].extend(
         [
             "NllbMoeForConditionalGeneration",
@@ -2734,6 +2837,13 @@ else:
             "OlmoForCausalLM",
             "OlmoModel",
             "OlmoPreTrainedModel",
+        ]
+    )
+    _import_structure["models.olmoe"].extend(
+        [
+            "OlmoeForCausalLM",
+            "OlmoeModel",
+            "OlmoePreTrainedModel",
         ]
     )
     _import_structure["models.oneformer"].extend(
@@ -2927,6 +3037,13 @@ else:
             "Qwen2PreTrainedModel",
         ]
     )
+    _import_structure["models.qwen2_audio"].extend(
+        [
+            "Qwen2AudioEncoder",
+            "Qwen2AudioForConditionalGeneration",
+            "Qwen2AudioPreTrainedModel",
+        ]
+    )
     _import_structure["models.qwen2_moe"].extend(
         [
             "Qwen2MoeForCausalLM",
@@ -2934,6 +3051,13 @@ else:
             "Qwen2MoeForTokenClassification",
             "Qwen2MoeModel",
             "Qwen2MoePreTrainedModel",
+        ]
+    )
+    _import_structure["models.qwen2_vl"].extend(
+        [
+            "Qwen2VLForConditionalGeneration",
+            "Qwen2VLModel",
+            "Qwen2VLPreTrainedModel",
         ]
     )
     _import_structure["models.rag"].extend(
@@ -4512,6 +4636,13 @@ else:
             "FlaxCLIPVisionPreTrainedModel",
         ]
     )
+    _import_structure["models.dinov2"].extend(
+        [
+            "FlaxDinov2Model",
+            "FlaxDinov2ForImageClassification",
+            "FlaxDinov2PreTrainedModel",
+        ]
+    )
     _import_structure["models.distilbert"].extend(
         [
             "FlaxDistilBertForMaskedLM",
@@ -4694,7 +4825,7 @@ if TYPE_CHECKING:
     from .agents import (
         Agent,
         CodeAgent,
-        HfEngine,
+        HfApiEngine,
         PipelineTool,
         ReactAgent,
         ReactCodeAgent,
@@ -4702,8 +4833,10 @@ if TYPE_CHECKING:
         Tool,
         Toolbox,
         ToolCollection,
+        TransformersEngine,
         launch_gradio_demo,
         load_tool,
+        stream_to_gradio,
     )
     from .configuration_utils import PretrainedConfig
 
@@ -4736,6 +4869,7 @@ if TYPE_CHECKING:
         DataCollatorForSOP,
         DataCollatorForTokenClassification,
         DataCollatorForWholeWordMask,
+        DataCollatorWithFlattening,
         DataCollatorWithPadding,
         DefaultDataCollator,
         default_data_collator,
@@ -4879,6 +5013,11 @@ if TYPE_CHECKING:
         CanineConfig,
         CanineTokenizer,
     )
+    from .models.chameleon import (
+        ChameleonConfig,
+        ChameleonProcessor,
+        ChameleonVQVAEConfig,
+    )
     from .models.chinese_clip import (
         ChineseCLIPConfig,
         ChineseCLIPProcessor,
@@ -4937,6 +5076,10 @@ if TYPE_CHECKING:
         CTRLTokenizer,
     )
     from .models.cvt import CvtConfig
+    from .models.dac import (
+        DacConfig,
+        DacFeatureExtractor,
+    )
     from .models.data2vec import (
         Data2VecAudioConfig,
         Data2VecTextConfig,
@@ -5055,6 +5198,7 @@ if TYPE_CHECKING:
     from .models.ernie import ErnieConfig
     from .models.esm import EsmConfig, EsmTokenizer
     from .models.falcon import FalconConfig
+    from .models.falcon_mamba import FalconMambaConfig
     from .models.fastspeech2_conformer import (
         FastSpeech2ConformerConfig,
         FastSpeech2ConformerHifiGanConfig,
@@ -5101,6 +5245,7 @@ if TYPE_CHECKING:
         GPTNeoXJapaneseConfig,
     )
     from .models.gptj import GPTJConfig
+    from .models.granite import GraniteConfig
     from .models.grounding_dino import (
         GroundingDinoConfig,
         GroundingDinoProcessor,
@@ -5111,6 +5256,7 @@ if TYPE_CHECKING:
         GroupViTVisionConfig,
     )
     from .models.herbert import HerbertTokenizer
+    from .models.hiera import HieraConfig
     from .models.hubert import HubertConfig
     from .models.ibert import IBertConfig
     from .models.idefics import (
@@ -5172,6 +5318,10 @@ if TYPE_CHECKING:
         LlavaNextVideoConfig,
         LlavaNextVideoProcessor,
     )
+    from .models.llava_onevision import (
+        LlavaOnevisionConfig,
+        LlavaOnevisionProcessor,
+    )
     from .models.longformer import (
         LongformerConfig,
         LongformerTokenizer,
@@ -5187,6 +5337,7 @@ if TYPE_CHECKING:
     )
     from .models.m2m_100 import M2M100Config
     from .models.mamba import MambaConfig
+    from .models.mamba2 import Mamba2Config
     from .models.marian import MarianConfig
     from .models.markuplm import (
         MarkupLMConfig,
@@ -5244,12 +5395,14 @@ if TYPE_CHECKING:
         MusicgenMelodyDecoderConfig,
     )
     from .models.mvp import MvpConfig, MvpTokenizer
+    from .models.nemotron import NemotronConfig
     from .models.nllb_moe import NllbMoeConfig
     from .models.nougat import NougatProcessor
     from .models.nystromformer import (
         NystromformerConfig,
     )
     from .models.olmo import OlmoConfig
+    from .models.olmoe import OlmoeConfig
     from .models.oneformer import (
         OneFormerConfig,
         OneFormerProcessor,
@@ -5315,7 +5468,16 @@ if TYPE_CHECKING:
     from .models.pvt import PvtConfig
     from .models.pvt_v2 import PvtV2Config
     from .models.qwen2 import Qwen2Config, Qwen2Tokenizer
+    from .models.qwen2_audio import (
+        Qwen2AudioConfig,
+        Qwen2AudioEncoderConfig,
+        Qwen2AudioProcessor,
+    )
     from .models.qwen2_moe import Qwen2MoeConfig
+    from .models.qwen2_vl import (
+        Qwen2VLConfig,
+        Qwen2VLProcessor,
+    )
     from .models.rag import RagConfig, RagRetriever, RagTokenizer
     from .models.recurrent_gemma import RecurrentGemmaConfig
     from .models.reformer import ReformerConfig
@@ -5617,6 +5779,7 @@ if TYPE_CHECKING:
         is_tokenizers_available,
         is_torch_available,
         is_torch_mlu_available,
+        is_torch_musa_available,
         is_torch_neuroncore_available,
         is_torch_npu_available,
         is_torch_tpu_available,
@@ -5633,9 +5796,11 @@ if TYPE_CHECKING:
         AwqConfig,
         BitsAndBytesConfig,
         EetqConfig,
+        FbgemmFp8Config,
         GPTQConfig,
         HqqConfig,
         QuantoConfig,
+        TorchAoConfig,
     )
 
     try:
@@ -5795,6 +5960,7 @@ if TYPE_CHECKING:
         from .models.bit import BitImageProcessor
         from .models.blip import BlipImageProcessor
         from .models.bridgetower import BridgeTowerImageProcessor
+        from .models.chameleon import ChameleonImageProcessor
         from .models.chinese_clip import (
             ChineseCLIPFeatureExtractor,
             ChineseCLIPImageProcessor,
@@ -5841,6 +6007,7 @@ if TYPE_CHECKING:
         from .models.levit import LevitFeatureExtractor, LevitImageProcessor
         from .models.llava_next import LlavaNextImageProcessor
         from .models.llava_next_video import LlavaNextVideoImageProcessor
+        from .models.llava_onevision import LlavaOnevisionImageProcessor, LlavaOnevisionVideoProcessor
         from .models.mask2former import Mask2FormerImageProcessor
         from .models.maskformer import (
             MaskFormerFeatureExtractor,
@@ -5866,6 +6033,7 @@ if TYPE_CHECKING:
             PoolFormerImageProcessor,
         )
         from .models.pvt import PvtImageProcessor
+        from .models.qwen2_vl import Qwen2VLImageProcessor
         from .models.rt_detr import RTDetrImageProcessor
         from .models.sam import SamImageProcessor
         from .models.segformer import SegformerFeatureExtractor, SegformerImageProcessor
@@ -5908,10 +6076,15 @@ if TYPE_CHECKING:
             DynamicCache,
             EncoderDecoderCache,
             HQQQuantizedCache,
+            HybridCache,
+            MambaCache,
+            OffloadedCache,
+            OffloadedStaticCache,
             QuantizedCache,
             QuantizedCacheConfig,
             QuantoQuantizedCache,
             SinkCache,
+            SlidingWindowCache,
             StaticCache,
         )
         from .data.datasets import (
@@ -5942,7 +6115,6 @@ if TYPE_CHECKING:
             ExponentialDecayLengthPenalty,
             ForcedBOSTokenLogitsProcessor,
             ForcedEOSTokenLogitsProcessor,
-            ForceTokensLogitsProcessor,
             GenerationMixin,
             HammingDiversityLogitsProcessor,
             InfNanRemoveLogitsProcessor,
@@ -5975,6 +6147,7 @@ if TYPE_CHECKING:
             WatermarkLogitsProcessor,
             WhisperTimeStampLogitsProcessor,
         )
+        from .modeling_rope_utils import ROPE_INIT_FUNCTIONS
         from .modeling_utils import PreTrainedModel
         from .models.albert import (
             AlbertForMaskedLM,
@@ -6194,10 +6367,13 @@ if TYPE_CHECKING:
         )
         from .models.blip_2 import (
             Blip2ForConditionalGeneration,
+            Blip2ForImageTextRetrieval,
             Blip2Model,
             Blip2PreTrainedModel,
             Blip2QFormerModel,
+            Blip2TextModelWithProjection,
             Blip2VisionModel,
+            Blip2VisionModelWithProjection,
         )
         from .models.bloom import (
             BloomForCausalLM,
@@ -6241,6 +6417,13 @@ if TYPE_CHECKING:
             CanineModel,
             CaninePreTrainedModel,
             load_tf_weights_in_canine,
+        )
+        from .models.chameleon import (
+            ChameleonForConditionalGeneration,
+            ChameleonModel,
+            ChameleonPreTrainedModel,
+            ChameleonProcessor,
+            ChameleonVQVAE,
         )
         from .models.chinese_clip import (
             ChineseCLIPModel,
@@ -6335,6 +6518,10 @@ if TYPE_CHECKING:
             CvtForImageClassification,
             CvtModel,
             CvtPreTrainedModel,
+        )
+        from .models.dac import (
+            DacModel,
+            DacPreTrainedModel,
         )
         from .models.data2vec import (
             Data2VecAudioForAudioFrameClassification,
@@ -6645,6 +6832,11 @@ if TYPE_CHECKING:
             FalconModel,
             FalconPreTrainedModel,
         )
+        from .models.falcon_mamba import (
+            FalconMambaForCausalLM,
+            FalconMambaModel,
+            FalconMambaPreTrainedModel,
+        )
         from .models.fastspeech2_conformer import (
             FastSpeech2ConformerHifiGan,
             FastSpeech2ConformerModel,
@@ -6783,6 +6975,11 @@ if TYPE_CHECKING:
             GPTJModel,
             GPTJPreTrainedModel,
         )
+        from .models.granite import (
+            GraniteForCausalLM,
+            GraniteModel,
+            GranitePreTrainedModel,
+        )
         from .models.grounding_dino import (
             GroundingDinoForObjectDetection,
             GroundingDinoModel,
@@ -6793,6 +6990,13 @@ if TYPE_CHECKING:
             GroupViTPreTrainedModel,
             GroupViTTextModel,
             GroupViTVisionModel,
+        )
+        from .models.hiera import (
+            HieraBackbone,
+            HieraForImageClassification,
+            HieraForPreTraining,
+            HieraModel,
+            HieraPreTrainedModel,
         )
         from .models.hubert import (
             HubertForCTC,
@@ -6924,6 +7128,10 @@ if TYPE_CHECKING:
             LlavaNextVideoForConditionalGeneration,
             LlavaNextVideoPreTrainedModel,
         )
+        from .models.llava_onevision import (
+            LlavaOnevisionForConditionalGeneration,
+            LlavaOnevisionPreTrainedModel,
+        )
         from .models.longformer import (
             LongformerForMaskedLM,
             LongformerForMultipleChoice,
@@ -6970,6 +7178,11 @@ if TYPE_CHECKING:
             MambaForCausalLM,
             MambaModel,
             MambaPreTrainedModel,
+        )
+        from .models.mamba2 import (
+            Mamba2ForCausalLM,
+            Mamba2Model,
+            Mamba2PreTrainedModel,
         )
         from .models.marian import MarianForCausalLM, MarianModel, MarianMTModel
         from .models.markuplm import (
@@ -7124,6 +7337,14 @@ if TYPE_CHECKING:
             MvpModel,
             MvpPreTrainedModel,
         )
+        from .models.nemotron import (
+            NemotronForCausalLM,
+            NemotronForQuestionAnswering,
+            NemotronForSequenceClassification,
+            NemotronForTokenClassification,
+            NemotronModel,
+            NemotronPreTrainedModel,
+        )
         from .models.nllb_moe import (
             NllbMoeForConditionalGeneration,
             NllbMoeModel,
@@ -7145,6 +7366,11 @@ if TYPE_CHECKING:
             OlmoForCausalLM,
             OlmoModel,
             OlmoPreTrainedModel,
+        )
+        from .models.olmoe import (
+            OlmoeForCausalLM,
+            OlmoeModel,
+            OlmoePreTrainedModel,
         )
         from .models.oneformer import (
             OneFormerForUniversalSegmentation,
@@ -7293,12 +7519,22 @@ if TYPE_CHECKING:
             Qwen2Model,
             Qwen2PreTrainedModel,
         )
+        from .models.qwen2_audio import (
+            Qwen2AudioEncoder,
+            Qwen2AudioForConditionalGeneration,
+            Qwen2AudioPreTrainedModel,
+        )
         from .models.qwen2_moe import (
             Qwen2MoeForCausalLM,
             Qwen2MoeForSequenceClassification,
             Qwen2MoeForTokenClassification,
             Qwen2MoeModel,
             Qwen2MoePreTrainedModel,
+        )
+        from .models.qwen2_vl import (
+            Qwen2VLForConditionalGeneration,
+            Qwen2VLModel,
+            Qwen2VLPreTrainedModel,
         )
         from .models.rag import (
             RagModel,
@@ -8568,6 +8804,11 @@ if TYPE_CHECKING:
             FlaxCLIPTextPreTrainedModel,
             FlaxCLIPVisionModel,
             FlaxCLIPVisionPreTrainedModel,
+        )
+        from .models.dinov2 import (
+            FlaxDinov2ForImageClassification,
+            FlaxDinov2Model,
+            FlaxDinov2PreTrainedModel,
         )
         from .models.distilbert import (
             FlaxDistilBertForMaskedLM,
