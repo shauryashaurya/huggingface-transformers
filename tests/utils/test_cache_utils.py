@@ -21,7 +21,7 @@ from parameterized import parameterized
 from transformers import set_seed
 from transformers.testing_utils import (
     is_torch_available,
-    require_auto_gptq,
+    require_gptq,
     require_non_xpu,
     require_read_token,
     require_torch,
@@ -53,7 +53,7 @@ class CacheTest(unittest.TestCase):
     def test_dynamic_cache_retrocompatibility(self):
         """Tests that we can convert back and forth between the legacy cache format and DynamicCache"""
         legacy_cache = ()
-        new_cache = DynamicCache(num_hidden_layers=10)
+        new_cache = DynamicCache()
 
         # Creates a new cache with 10 layers in both formats
         for layer_idx in range(10):
@@ -83,7 +83,7 @@ class CacheTest(unittest.TestCase):
                 )
 
         # Test 1: We can convert from legacy to new with no changes
-        from_legacy = DynamicCache.from_legacy_cache(legacy_cache, num_hidden_layers=10)
+        from_legacy = DynamicCache.from_legacy_cache(legacy_cache)
         for layer_idx in range(10):
             for key_value_idx in range(2):
                 self.assertTrue(
@@ -103,7 +103,7 @@ class CacheTest(unittest.TestCase):
         legacy_reorder_fn = GPT2LMHeadModel._reorder_cache  # An example of a legacy `_reorder_cache` function
 
         legacy_cache = ()
-        new_cache = DynamicCache(num_hidden_layers=10)
+        new_cache = DynamicCache()
 
         # Creates a new cache with 10 layers in both formats
         for layer_idx in range(10):
@@ -181,7 +181,7 @@ class CacheTest(unittest.TestCase):
 
         set_seed(0)
         device = "cpu"
-        dtype = torch.float32
+        dtype = "bfloat16"
         cache_implementation = "static"
         attn_implementation = "sdpa"  # Export and ExecuTorch only works for SdpaAttention
         batch_size = 1
@@ -240,9 +240,7 @@ class CacheIntegrationTest(unittest.TestCase):
         set_seed(0)
         gen_out_legacy = model.generate(**inputs, do_sample=True, max_new_tokens=256)
         set_seed(0)
-        gen_out = model.generate(
-            **inputs, do_sample=True, max_new_tokens=256, past_key_values=DynamicCache(model.config.num_hidden_layers)
-        )
+        gen_out = model.generate(**inputs, do_sample=True, max_new_tokens=256, past_key_values=DynamicCache())
         self.assertListEqual(gen_out_legacy.tolist(), gen_out.tolist())
 
         decoded = tokenizer.batch_decode(gen_out, skip_special_tokens=True)
@@ -270,9 +268,7 @@ class CacheIntegrationTest(unittest.TestCase):
             model.device
         )
 
-        gen_out = model.generate(
-            **inputs, do_sample=False, max_new_tokens=10, past_key_values=DynamicCache(model.config.num_hidden_layers)
-        )
+        gen_out = model.generate(**inputs, do_sample=False, max_new_tokens=10, past_key_values=DynamicCache())
         decoded = tokenizer.batch_decode(gen_out, skip_special_tokens=True)
         expected_text = ["A sequence: 1, 2, 3, 4, 5, 6, 7, 8,", "A sequence: A, B, C, D, E, F, G, H"]
         self.assertListEqual(decoded, expected_text)
@@ -323,7 +319,7 @@ class CacheIntegrationTest(unittest.TestCase):
         self.assertListEqual(decoded, expected_text)
 
     @require_non_xpu
-    @require_auto_gptq
+    @require_gptq
     def test_sink_cache_hard(self):
         tokenizer = AutoTokenizer.from_pretrained("TheBloke/LLaMa-7B-GPTQ")
         model = AutoModelForCausalLM.from_pretrained("TheBloke/LLaMa-7B-GPTQ", device_map="auto")

@@ -1552,6 +1552,8 @@ class RoCBertForCausalLM(RoCBertPreTrainedModel, GenerationMixin):
         attention_mask=None,
         **model_kwargs,
     ):
+        # Overwritten -- `input_pronunciation_ids`
+
         input_shape = input_ids.shape
 
         # if model is used as a decoder in encoder-decoder model, the decoder attention mask is created on the fly
@@ -1994,3 +1996,18 @@ class RoCBertForQuestionAnswering(RoCBertPreTrainedModel):
             hidden_states=outputs.hidden_states,
             attentions=outputs.attentions,
         )
+
+
+__all__ = [
+    "RoCBertForCausalLM",
+    "RoCBertForMaskedLM",
+    "RoCBertForMultipleChoice",
+    "RoCBertForPreTraining",
+    "RoCBertForQuestionAnswering",
+    "RoCBertForSequenceClassification",
+    "RoCBertForTokenClassification",
+    "RoCBertLayer",
+    "RoCBertModel",
+    "RoCBertPreTrainedModel",
+    "load_tf_weights_in_roc_bert",
+]

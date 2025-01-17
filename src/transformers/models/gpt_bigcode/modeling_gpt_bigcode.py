@@ -278,7 +278,6 @@ class GPTBigCodeFlashAttention2(GPTBigCodeAttention):
     API of flash attention and deal with padding tokens in case the input contains any of them.
     """
 
-    # Copied from transformers.models.llama.modeling_llama.LlamaFlashAttention2.__init__
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -1059,6 +1058,8 @@ class GPTBigCodeForCausalLM(GPTBigCodePreTrainedModel, GenerationMixin):
         self.lm_head = new_embeddings
 
     def prepare_inputs_for_generation(self, input_ids, past_key_values=None, inputs_embeds=None, **kwargs):
+        # Overwritten -- `past_key_values` with uncommon shape
+
         token_type_ids = kwargs.get("token_type_ids", None)
         # Omit tokens covered by past_key_values
         if past_key_values:
@@ -1418,3 +1419,12 @@ class GPTBigCodeForTokenClassification(GPTBigCodePreTrainedModel):
             hidden_states=transformer_outputs.hidden_states,
             attentions=transformer_outputs.attentions,
         )
+
+
+__all__ = [
+    "GPTBigCodeForSequenceClassification",
+    "GPTBigCodeForTokenClassification",
+    "GPTBigCodeForCausalLM",
+    "GPTBigCodeModel",
+    "GPTBigCodePreTrainedModel",
+]

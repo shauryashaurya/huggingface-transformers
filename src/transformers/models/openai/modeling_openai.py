@@ -604,6 +604,7 @@ class OpenAIGPTLMHeadModel(OpenAIGPTPreTrainedModel, GenerationMixin):
         )
 
     def prepare_inputs_for_generation(self, input_ids: torch.LongTensor, **kwargs) -> Dict[str, Any]:
+        # Overwritten -- old model with reduced inputs
         return {"input_ids": input_ids}
 
 
@@ -854,3 +855,13 @@ class OpenAIGPTForSequenceClassification(OpenAIGPTPreTrainedModel):
             hidden_states=transformer_outputs.hidden_states,
             attentions=transformer_outputs.attentions,
         )
+
+
+__all__ = [
+    "OpenAIGPTDoubleHeadsModel",
+    "OpenAIGPTForSequenceClassification",
+    "OpenAIGPTLMHeadModel",
+    "OpenAIGPTModel",
+    "OpenAIGPTPreTrainedModel",
+    "load_tf_weights_in_openai_gpt",
+]
